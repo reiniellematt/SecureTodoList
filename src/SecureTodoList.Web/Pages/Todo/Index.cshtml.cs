@@ -26,10 +26,8 @@ namespace SecureTodoList.Web.Pages.Todo
         {
             using (var client = _clientFactory.CreateClient())
             {
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
                 var response = await client.GetAsync("https://localhost:5001/api/todo");
+
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception(response.ReasonPhrase);
@@ -44,6 +42,25 @@ namespace SecureTodoList.Web.Pages.Todo
         }
 
         // TODO: Integrate with UI and fix to make it more secure.
-        
+        public async Task<IActionResult> OnPostMarkDoneAsync(int itemId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            using (var client = _clientFactory.CreateClient())
+            {
+                var response = await client.PutAsync($"https://localhost:5001/api/todo/markdone/{itemId}", null);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return StatusCode(500);
+                }
+
+                return RedirectToPage();
+            }
+
+        }
     }
 }

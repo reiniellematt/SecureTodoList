@@ -25,7 +25,7 @@ namespace SecureTodoList.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var items = await _context.TodoItems.ToListAsync();
+            var items = await _context.TodoItems.Where(t => !t.IsDone).ToListAsync();
 
             return Ok(items);
         }
