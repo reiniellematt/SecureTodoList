@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using SecureTodoList.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace SecureTodoList.Web.Pages.Todo
 {
@@ -41,7 +39,6 @@ namespace SecureTodoList.Web.Pages.Todo
             }
         }
 
-        // TODO: Integrate with UI and fix to make it more secure.
         public async Task<IActionResult> OnPostMarkDoneAsync(int itemId)
         {
             if (!ModelState.IsValid)
@@ -60,7 +57,6 @@ namespace SecureTodoList.Web.Pages.Todo
 
                 return RedirectToPage();
             }
-
         }
     }
 }

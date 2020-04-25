@@ -34,6 +34,8 @@ namespace SecureTodoList.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TodoItem newItem)
         {
+            newItem.UserId = null;
+
             _context.Entry(newItem).State = EntityState.Added;
 
             var ok = await _context.SaveChangesAsync();

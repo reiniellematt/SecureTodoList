@@ -17,7 +17,7 @@ namespace SecureTodoList.Web.Models
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime DueDate { get; set; }
+        public DateTime DueDate { get; set; } = DateTime.Now.Date;
 
         public bool IsDone { get; set; } = false;
     }
