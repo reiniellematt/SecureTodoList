@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using SecureTodoList.Web.Models;
 
 namespace SecureTodoList.Web.Pages.Todo
 {
+    [Authorize]
     public class CreateModel : PageModel
     {
         private readonly IHttpClientFactory _clientFactory;

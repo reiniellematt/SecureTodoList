@@ -29,6 +29,14 @@ namespace SecureTodoList.Api
         {
             services.AddControllers();
 
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = "http://localhost:5000";
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = "SecureTodoList.Api";
+                });
+
             services.AddDbContext<Data.ApplicationDbContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("TodoDb")));
 
@@ -61,6 +69,7 @@ namespace SecureTodoList.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
