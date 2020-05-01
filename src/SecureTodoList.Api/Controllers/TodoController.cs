@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureTodoList.Api.Data;
 using SecureTodoList.Api.Models;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SecureTodoList.Api.Controllers
 {
@@ -40,7 +37,6 @@ namespace SecureTodoList.Api.Controllers
         public async Task<IActionResult> Post([FromBody] TodoItem newItem)
         {
             newItem.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userName = User.FindFirstValue(ClaimTypes.Name);
 
             _context.Entry(newItem).State = EntityState.Added;
 
