@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 using SecureTodoList.Web.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SecureTodoList.Web.Pages.Todo
@@ -17,7 +17,6 @@ namespace SecureTodoList.Web.Pages.Todo
     public class IndexModel : PageModel
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly string _accessToken;
 
         public List<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
 
@@ -32,8 +31,12 @@ namespace SecureTodoList.Web.Pages.Todo
 
             using (var client = _clientFactory.CreateClient())
             {
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.BaseAddress = new Uri("https://localhost:5001");
                 client.SetBearerToken(token);
-                var response = await client.GetAsync("https://localhost:5001/api/todo");
+
+                var response = await client.GetAsync("/api/todo");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -50,13 +53,21 @@ namespace SecureTodoList.Web.Pages.Todo
 
         public async Task<IActionResult> OnPostMarkDoneAsync(int itemId)
         {
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
+            var token = await HttpContext.GetTokenAsync("access_token");
+
             using (var client = _clientFactory.CreateClient())
             {
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.BaseAddress = new Uri("https://localhost:5001");
+                client.SetBearerToken(token);
+
                 var response = await client.PutAsync($"https://localhost:5001/api/todo/markdone/{itemId}", null);
 
                 if (!response.IsSuccessStatusCode)
