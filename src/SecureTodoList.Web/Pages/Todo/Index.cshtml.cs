@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using SecureTodoList.Web.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -14,6 +17,7 @@ namespace SecureTodoList.Web.Pages.Todo
     public class IndexModel : PageModel
     {
         private readonly IHttpClientFactory _clientFactory;
+        private readonly string _accessToken;
 
         public List<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
 
@@ -24,8 +28,11 @@ namespace SecureTodoList.Web.Pages.Todo
 
         public async Task OnGet()
         {
+            var token = await HttpContext.GetTokenAsync("access_token");
+
             using (var client = _clientFactory.CreateClient())
             {
+                client.SetBearerToken(token);
                 var response = await client.GetAsync("https://localhost:5001/api/todo");
 
                 if (!response.IsSuccessStatusCode)

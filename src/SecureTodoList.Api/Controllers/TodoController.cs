@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ namespace SecureTodoList.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TodoController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +28,9 @@ namespace SecureTodoList.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var items = await _context.TodoItems.Where(t => !t.IsDone).ToListAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var items = await _context.TodoItems.Where(t => !t.IsDone && t.UserId.Equals(userId)).ToListAsync();
 
             return Ok(items);
         }
@@ -34,7 +39,8 @@ namespace SecureTodoList.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TodoItem newItem)
         {
-            newItem.UserId = null;
+            newItem.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userName = User.FindFirstValue(ClaimTypes.Name);
 
             _context.Entry(newItem).State = EntityState.Added;
 
