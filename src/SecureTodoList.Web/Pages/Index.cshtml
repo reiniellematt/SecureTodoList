@@ -1,8 +1,24 @@
 ﻿@page
+
+@using Microsoft.AspNetCore.Authentication
+
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
+
+<div class="container">
+    <form method="post">
+        @if (!User.Identity.IsAuthenticated)
+	    {
+		     <button class="btn-outline-dark" asp-page-handler="Login">Login</button>
+        }
+        else
+        {
+            <button class="btn-outline-dark" asp-page-handler="SignOut">Sign Out</button>
+        }
+    </form>
+</div>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>

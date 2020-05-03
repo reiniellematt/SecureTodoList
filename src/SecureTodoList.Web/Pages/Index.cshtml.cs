@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using IdentityModel.Client;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 
 namespace SecureTodoList.Web.Pages
 {
@@ -20,6 +23,17 @@ namespace SecureTodoList.Web.Pages
         public void OnGet()
         {
 
+        }
+
+        public async Task OnPostLogin()
+        {
+            await HttpContext.ChallengeAsync("oidc");
+        }
+
+        public async Task OnPostSignOut()
+        {
+            await HttpContext.SignOutAsync("oidc");
+            await HttpContext.SignOutAsync("Cookies");
         }
     }
 }
