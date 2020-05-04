@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
 
 namespace SecureTodoList.IdServ
 {
@@ -49,7 +50,9 @@ namespace SecureTodoList.IdServ
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-            
+
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             var builder = services.AddIdentityServer(options =>
                 {
                     options.Events.RaiseErrorEvents = true;
@@ -57,10 +60,15 @@ namespace SecureTodoList.IdServ
                     options.Events.RaiseFailureEvents = true;
                     options.Events.RaiseSuccessEvents = true;
                 })
-                .AddInMemoryIdentityResources(Config.Ids)
-                .AddInMemoryApiResources(Config.Apis)
-                .AddInMemoryClients(Config.Clients)
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseSqlite(Configuration.GetConnectionString("ConfigDb"), sql => sql.MigrationsAssembly(migrationsAssembly));
+                })
+                .AddOperationalStore(options => 
+                {
+                    options.ConfigureDbContext = b => b.UseSqlite(Configuration.GetConnectionString("ConfigDb"), sql => sql.MigrationsAssembly(migrationsAssembly));
+                });
 
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
